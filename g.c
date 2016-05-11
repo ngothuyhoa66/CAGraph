@@ -24,21 +24,13 @@ int load_graph(char* fname, Graph out) {
   return 1;
 }
 
-void bfs_print(char* fname, char* arg) {
-  Graph g;
-  int u;
-  if (load_graph(fname, &g) == 0 || parse_int(arg, &u)) {
-    printf("Loi doc du lieu.\n");
-    return;
-  }
-
-  // duyet bfs
+void bfs_print(Graph g, int start) {  // duyet bfs bat dau tu start
   Queue q = new_queue();
-  en_queue_i(q, u);
+  en_queue_i(q, start);
   JRB visited = make_jrb();
   Jval any_value;
   while (!queue_empty(q)) {
-    u = de_queue_i(q);
+    int u = de_queue_i(q);
     printf("%d ", u);  // tham dinh u
     jrb_insert_int(visited, u, any_value);
     Queue out = get_adjacent(g, u);
@@ -58,11 +50,26 @@ int main(int argc, char *argv[]) {
            "./g bfs_print g.txt 1: duyet theo chieu rong va in ra cac dinh, bat dau tu dinh 1\n"
            "./g dfs_print g.txt 1: duyet theo chieu sau va in ra cac dinh, bat dau tu dinh 1\n");
   } else if (str_equal(argv[1], "bfs_print")) {
-    bfs_print(argv[2], argv[3]);
+    Graph g;
+    int start;
+    if (parse_graph(argv[2], &g) && parse_int(argv[3], &start))
+      bfs_print(g, start);
+    else
+      printf("Loi doc tham so.\n")
   } else if (str_equal(argv[1], "dfs_print")) {
-    dfs_print(argv[2], argv[3]);
+    Graph g;
+    int start;
+    if (parse_graph(argv[2], &g) && parse_int(argv[3], &start))
+      dfs_print(g, start);
+    else
+      printf("Loi doc tham so.\n")
   } else if (str_equal(argv[1], "adjacent")) {
-    adjacent(argv[2], argv[3]);
+    Graph g;
+    int start;
+    if (parse_graph(argv[2], &g) && parse_int(argv[3], &start))
+      adjacent(g, start);
+    else
+      printf("Loi doc tham so.\n")
   } else {
     printf("Cau lenh khong duoc ho tro.\n");
   }
