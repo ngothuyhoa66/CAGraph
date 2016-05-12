@@ -20,7 +20,11 @@ Graph new_graph() {
   return make_jrb();
 }
 
-void add_edge_gen(Graph g, Jval v1, Jval v2, CompareFuncGen func) {
+Vertex new_vertex_i(int id) {
+  return new_jval_i(id);
+}
+
+void add_edge_gen(Graph g, Vertex v1, Vertex v2, float w, CompareFuncGen func) {
   JRB node = jrb_find_gen(g, v1, func);
   JRB vertex;
   if (node == NULL) {
@@ -31,22 +35,29 @@ void add_edge_gen(Graph g, Jval v1, Jval v2, CompareFuncGen func) {
   }
 
   if (jrb_find_gen(vertex, v2, func) == NULL) {  // chua co dinh nay
-    Jval any_value;
-    jrb_insert_gen(vertex, v2, any_value, func);
+    jrb_insert_gen(vertex, v2, new_jval_f(w), func);
   }
 }
 
-int get_adjacent_gen(Graph g, Jval v, CompareFuncGen func, JRB* out) {
+int get_adjacent_gen(Graph g, Vertex v, CompareFuncGen func, EdgeTree* out) {
   int n = 0;
   JRB node = jrb_find_gen(g, v, func);
   if (node == NULL)
     return 0;
-  JRB ptr;
-  JRB vertex = (JRB) jval_v(node->val);
-  jrb_traverse(ptr, vertex)
+  Edge ptr;
+  EdgeTree edges = (JRB) jval_v(node->val);
+  jrb_traverse(ptr, edges)
     n++;
-  *out = vertex;
+  *out = edges;
   return n;
+}
+
+int edge_end_i(Edge e) {
+  return jval_i(e->key);
+}
+
+int edge_weight_f(Edge e) {
+  return jval_f(e->val);
 }
 
 // ---------- Stack APIs ---------

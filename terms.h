@@ -7,6 +7,9 @@
 #include "libfdr/jrb.h"
 
 typedef JRB Graph;
+typedef Jval Vertex;
+typedef JRB Edge;
+typedef JRB EdgeTree;
 typedef Dllist Stack;
 typedef Dllist Queue;
 typedef int (*CompareFuncGen)(Jval, Jval);
@@ -17,8 +20,11 @@ extern int jrb_contain_int(JRB tree, int key);
 
 // ---------- Graph APIs ---------
 extern Graph new_graph();
-extern void add_edge_gen(Graph g, Jval v1, Jval v2, CompareFuncGen func);
-extern int get_adjacent_gen(Graph g, Jval v, CompareFuncGen func, JRB* out);
+extern Vertex new_vertex_i(int id);
+extern void add_edge_gen(Graph g, Vertex v1, Vertex v2, float w, CompareFuncGen func);
+extern int get_adjacent_gen(Graph g, Vertex v, CompareFuncGen func, EdgeTree* out);
+extern int edge_end_i(Edge e);
+extern int edge_weight_f(Edge e);
 
 // ---------- Stack APIs ---------
 extern Stack new_stack();

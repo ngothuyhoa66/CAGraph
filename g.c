@@ -43,7 +43,7 @@ void cmd_bfs_print(Graph g, int start) {  // duyet bfs bat dau tu start
     int u = de_queue_i(q);
     printf("%d ", u);  // tham dinh u
     JRB out, ptr;
-    if (get_adjacent_gen(g, new_jval_i(u), &cmp_int, &out) > 0) {
+    if (get_adjacent_gen(g, new_vertex_i(u), &cmp_int, &out) > 0) {
       // luon phai kiem tra so dinh tra ve, vi neu so dinh bang 0, out co the khong hop le
       jrb_traverse(ptr, out) {
         int v = jval_i(ptr->key);
