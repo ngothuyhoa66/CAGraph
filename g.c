@@ -6,14 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 
-int cmp_int(Jval v1, Jval v2) {
-  if (jval_i(v1) < jval_i(v2))
-    return -1;
-  if (jval_i(v1) > jval_i(v2))
-    return 1;
-  return 0;
-}
-
 // tra ve 0 neu co loi,
 //        1 neu thanh cong.
 int parse_graph(char* fname, Graph* out) {
@@ -26,8 +18,8 @@ int parse_graph(char* fname, Graph* out) {
   for (int i = 0; i < n; i++) {
     int u, v;
     fscanf(f, "%d%d", &u, &v);
-    add_edge_gen(g, new_jval_i(u), new_jval_i(v), &cmp_int);
-    add_edge_gen(g, new_jval_i(v), new_jval_i(u), &cmp_int);
+    graph_add_edge(g, u, v, 1.0);
+    graph_add_edge(g, v, u, 1.0);
   }
   fclose(f);
   *out = g;
@@ -42,11 +34,12 @@ void cmd_bfs_print(Graph g, int start) {  // duyet bfs bat dau tu start
   while (!queue_empty(q)) {
     int u = de_queue_i(q);
     printf("%d ", u);  // tham dinh u
-    JRB out, ptr;
-    if (get_adjacent_gen(g, new_vertex_i(u), &cmp_int, &out) > 0) {
+    EVertex ptr;
+    EVertexes out;
+    if (graph_adjacent_list(g, u, &out) > 0) {
       // luon phai kiem tra so dinh tra ve, vi neu so dinh bang 0, out co the khong hop le
-      jrb_traverse(ptr, out) {
-        int v = jval_i(ptr->key);
+      evertexes_traverse(ptr, out) {
+        int v = evertex_id(ptr);
         if (!jrb_contain_int(seen, v)) {
           en_queue_i(q, v);
           jrb_mark_int(seen, v);
@@ -55,7 +48,7 @@ void cmd_bfs_print(Graph g, int start) {  // duyet bfs bat dau tu start
     }
   }
   free_queue(q);
-  jrb_free_tree(visited);
+  jrb_free_tree(seen);
 }
 
 void cmd_dfs_print(Graph g, int start) {  // duyet dfs bat dau tu start
@@ -66,11 +59,12 @@ void cmd_dfs_print(Graph g, int start) {  // duyet dfs bat dau tu start
   while (!stack_empty(s)) {
     int u = pop_i(s);
     printf("%d ", u);  // tham dinh u
-    JRB out, ptr;
-    if (get_adjacent_gen(g, new_jval_i(u), &cmp_int, &out) > 0) {
+    EVertex ptr;
+    EVertexes out;
+    if (graph_adjacent_list(g, u, &out) > 0) {
       // luon phai kiem tra so dinh tra ve, vi neu so dinh bang 0, out co the khong hop le
-      jrb_traverse(ptr, out) {
-        int v = jval_i(ptr->key);
+      evertexes_traverse(ptr, out) {
+        int v = evertex_id(ptr);
         if (!jrb_contain_int(seen, v)) {
           push_i(s, v);
           jrb_mark_int(seen, v);
@@ -79,17 +73,17 @@ void cmd_dfs_print(Graph g, int start) {  // duyet dfs bat dau tu start
     }
   }
   free_stack(s);
-  jrb_free_tree(visited);
+  jrb_free_tree(seen);
 }
 
 void cmd_adjacent(Graph g, int u) {
-  JRB out = NULL;
-  int n = get_adjacent_gen(g, new_jval_i(u), &cmp_int, &out);
+  EVertexes out = NULL;
+  int n = graph_adjacent_list(g, u, &out);
   printf("n = %d\n", n);
   if (n > 0) {
-    JRB ptr;
-    jrb_traverse(ptr, out) {
-      printf("%d ", jval_i(ptr->key));
+    EVertex ptr;
+    evertexes_traverse(ptr, out) {
+      printf("%d ", evertex_id(ptr));
     }
   }
 }

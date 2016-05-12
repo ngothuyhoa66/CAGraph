@@ -7,9 +7,9 @@
 #include "libfdr/jrb.h"
 
 typedef JRB Graph;
-typedef Jval Vertex;
-typedef JRB Edge;
-typedef JRB EdgeTree;
+typedef JRB SVertex;  // đỉnh bắt đâu của một danh sách cạnh có hướng
+typedef JRB EVertex;  // đỉnh kết thúc của một cạnh có hướng, chứa trọng số cạnh
+typedef JRB EVertexes;  // danh sách đỉnh kết thúc (danh sách kề của một đỉnh)
 typedef Dllist Stack;
 typedef Dllist Queue;
 typedef int (*CompareFuncGen)(Jval, Jval);
@@ -20,11 +20,13 @@ extern int jrb_contain_int(JRB tree, int key);
 
 // ---------- Graph APIs ---------
 extern Graph new_graph();
-extern Vertex new_vertex_i(int id);
-extern void add_edge_gen(Graph g, Vertex v1, Vertex v2, float w, CompareFuncGen func);
-extern int get_adjacent_gen(Graph g, Vertex v, CompareFuncGen func, EdgeTree* out);
-extern int edge_end_i(Edge e);
-extern int edge_weight_f(Edge e);
+extern void graph_add_edge(Graph g, int v1, int v2, float w);
+extern int graph_adjacent_list(Graph g, int v, EVertexes* out);
+extern int svertex_id(SVertex s);
+extern EVertexes svertex_lst(SVertex s);
+extern int evertex_id(EVertex e);
+extern float evertex_w(EVertex e);
+extern void evertexes_free(EVertexes lst);
 
 // ---------- Stack APIs ---------
 extern Stack new_stack();
@@ -42,6 +44,7 @@ extern void free_queue(Queue q);
 
 // ----------Helper macros --------
 #define str_equal(s1, s2) strcmp(s1, s2) == 0
+#define evertexes_traverse(ptr, lst) jrb_traverse(ptr, lst)
 
 #endif  // TERMS_H_
 

@@ -8,6 +8,6 @@
 // parse int from an argument, return 1 if success, 0 if failed
 extern int parse_int(char* arg, int* out);
 
-// extern int cmp_int(Jval v1, Jval v2);
+extern int cmp_int(Jval v1, Jval v2);
 
 #endif  // TERMS_H_

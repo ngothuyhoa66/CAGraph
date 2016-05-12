@@ -20,44 +20,52 @@ Graph new_graph() {
   return make_jrb();
 }
 
-Vertex new_vertex_i(int id) {
-  return new_jval_i(id);
+int svertex_id(SVertex s) {
+  return jval_i(s->key);
 }
 
-void add_edge_gen(Graph g, Vertex v1, Vertex v2, float w, CompareFuncGen func) {
-  JRB node = jrb_find_gen(g, v1, func);
-  JRB vertex;
-  if (node == NULL) {
-    vertex = make_jrb();
-    jrb_insert_gen(g, v1, new_jval_v((void*)vertex), func);
-  } else {
-    vertex = (JRB) jval_v(node->val);
-  }
-
-  if (jrb_find_gen(vertex, v2, func) == NULL) {  // chua co dinh nay
-    jrb_insert_gen(vertex, v2, new_jval_f(w), func);
-  }
+EVertexes svertex_lst(SVertex s) {
+  return (EVertexes) jval_v(s->val);
 }
 
-int get_adjacent_gen(Graph g, Vertex v, CompareFuncGen func, EdgeTree* out) {
-  int n = 0;
-  JRB node = jrb_find_gen(g, v, func);
-  if (node == NULL)
-    return 0;
-  Edge ptr;
-  EdgeTree edges = (JRB) jval_v(node->val);
-  jrb_traverse(ptr, edges)
-    n++;
-  *out = edges;
-  return n;
-}
-
-int edge_end_i(Edge e) {
+int evertex_id(EVertex e) {
   return jval_i(e->key);
 }
 
-int edge_weight_f(Edge e) {
+float evertex_w(EVertex e) {
   return jval_f(e->val);
+}
+
+void evertexes_free(EVertexes lst) {
+  jrb_free_tree(lst);
+}
+
+void graph_add_edge(Graph g, int v1, int v2, float w) {
+  SVertex s = jrb_find_int(g, v1);
+  EVertexes lst;
+  if (s == NULL) {
+    lst = make_jrb();
+    jrb_insert_int(g, v1, new_jval_v((void*)lst));
+  } else {
+    lst = svertex_lst(s);
+  }
+
+  if (jrb_find_int(lst, v2) == NULL) {  // chua co dinh nay
+    jrb_insert_int(lst, v2, new_jval_f(w));
+  }
+}
+
+int graph_adjacent_list(Graph g, int v, EVertexes* out) {
+  int n = 0;
+  SVertex s = jrb_find_int(g, v);
+  if (s == NULL)
+    return 0;
+  EVertex ptr;
+  EVertexes lst = svertex_lst(s);
+  evertexes_traverse(ptr, lst)
+    n++;
+  *out = lst;
+  return n;
 }
 
 // ---------- Stack APIs ---------
