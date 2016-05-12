@@ -6,6 +6,16 @@
 
 #include "libfdr/jval.h"
 
+// ---------- JRB APIs ----------
+void jrb_mark_int(JRB tree, int val) {
+  jrb_insert_int(tree, val, new_jval_i(1));
+}
+
+int jrb_contain_int(JRB tree, int key) {
+  return jrb_find_int(tree, key)? 1: 0;
+}
+
+// ---------- Graph APIs ---------
 Graph new_graph() {
   return make_jrb();
 }
@@ -33,12 +43,13 @@ int get_adjacent_gen(Graph g, Jval v, CompareFuncGen func, JRB* out) {
     return 0;
   JRB ptr;
   JRB vertex = (JRB) jval_v(node->val);
-  jrb_traverse(ptr, vertex) 
+  jrb_traverse(ptr, vertex)
     n++;
   *out = vertex;
   return n;
 }
 
+// ---------- Stack APIs ---------
 Stack new_stack() {
   return new_dllist();
 }
@@ -64,6 +75,7 @@ int pop_i(Stack s) {  // khong kiem tra stack rong
   return val;
 }
 
+// ---------- Queue APIs ---------
 Queue new_queue() {
   return new_dllist();
 }

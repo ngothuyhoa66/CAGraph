@@ -37,45 +37,49 @@ int parse_graph(char* fname, Graph* out) {
 void cmd_bfs_print(Graph g, int start) {  // duyet bfs bat dau tu start
   Queue q = new_queue();
   en_queue_i(q, start);
-  JRB visited = make_jrb();
-  Jval any_value;
-  jrb_insert_int(visited, start, any_value);
+  JRB seen = make_jrb();
+  jrb_mark_int(seen, start);
   while (!queue_empty(q)) {
     int u = de_queue_i(q);
-    printf("%d ", u);  // tham dinh u    
+    printf("%d ", u);  // tham dinh u
     JRB out, ptr;
-    get_adjacent_gen(g, new_jval_i(u), &cmp_int, &out);
-    jrb_traverse(ptr, out) {
-      int v = jval_i(ptr->key);
-      if (jrb_find_int(visited, v) == NULL) {
-        en_queue_i(q, v);
-        jrb_insert_int(visited, v, any_value);
+    if (get_adjacent_gen(g, new_jval_i(u), &cmp_int, &out) > 0) {
+      // luon phai kiem tra so dinh tra ve, vi neu so dinh bang 0, out co the khong hop le
+      jrb_traverse(ptr, out) {
+        int v = jval_i(ptr->key);
+        if (!jrb_contain_int(seen, v)) {
+          en_queue_i(q, v);
+          jrb_mark_int(seen, v);
+        }
       }
     }
   }
   free_queue(q);
+  jrb_free_tree(visited);
 }
 
 void cmd_dfs_print(Graph g, int start) {  // duyet dfs bat dau tu start
   Stack s = new_stack();
   push_i(s, start);
-  JRB visited = make_jrb();
-  Jval any_value;
-  jrb_insert_int(visited, start, any_value);
+  JRB seen = make_jrb();
+  jrb_mark_int(seen, start);
   while (!stack_empty(s)) {
     int u = pop_i(s);
-    printf("%d ", u);  // tham dinh u    
+    printf("%d ", u);  // tham dinh u
     JRB out, ptr;
-    get_adjacent_gen(g, new_jval_i(u), &cmp_int, &out);
-    jrb_traverse(ptr, out) {
-      int v = jval_i(ptr->key);
-      if (jrb_find_int(visited, v) == NULL) {
-        push_i(s, v);
-        jrb_insert_int(visited, v, any_value);
+    if (get_adjacent_gen(g, new_jval_i(u), &cmp_int, &out) > 0) {
+      // luon phai kiem tra so dinh tra ve, vi neu so dinh bang 0, out co the khong hop le
+      jrb_traverse(ptr, out) {
+        int v = jval_i(ptr->key);
+        if (!jrb_contain_int(seen, v)) {
+          push_i(s, v);
+          jrb_mark_int(seen, v);
+        }
       }
     }
   }
   free_stack(s);
+  jrb_free_tree(visited);
 }
 
 void cmd_adjacent(Graph g, int u) {
