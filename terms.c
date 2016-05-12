@@ -2,22 +2,41 @@
 
 #include "terms.h"
 
+#include <stdio.h>
+
 #include "libfdr/jval.h"
 
 Graph new_graph() {
   return make_jrb();
 }
 
-void add_edge_gen(Graph g, Jval v1, Jval v2, int (*func)(Jval, Jval)) {
-  JRB vertex = jrb_find_gen(g, v1, func);
-  if (vertex == NULL) {
+void add_edge_gen(Graph g, Jval v1, Jval v2, CompareFuncGen func) {
+  JRB node = jrb_find_gen(g, v1, func);
+  JRB vertex;
+  if (node == NULL) {
     vertex = make_jrb();
-    jrb_insert_gen(v1, new_jval_v((void*)vertex));
+    jrb_insert_gen(g, v1, new_jval_v((void*)vertex), func);
+  } else {
+    vertex = (JRB) jval_v(node->val);
   }
 
   if (jrb_find_gen(vertex, v2, func) == NULL) {  // chua co dinh nay
-    jrb_insert_gen(vertex, v2, func);
+    Jval any_value;
+    jrb_insert_gen(vertex, v2, any_value, func);
   }
+}
+
+int get_adjacent_gen(Graph g, Jval v, CompareFuncGen func, JRB* out) {
+  int n = 0;
+  JRB node = jrb_find_gen(g, v, func);
+  if (node == NULL)
+    return 0;
+  JRB ptr;
+  JRB vertex = (JRB) jval_v(node->val);
+  jrb_traverse(ptr, vertex) 
+    n++;
+  *out = vertex;
+  return n;
 }
 
 Stack new_stack() {

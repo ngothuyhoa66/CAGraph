@@ -4,14 +4,16 @@
 #define TERMS_H_
 
 #include "libfdr/dllist.h"
-#include "libder/jrb.h"
+#include "libfdr/jrb.h"
 
 typedef JRB Graph;
 typedef Dllist Stack;
 typedef Dllist Queue;
+typedef int (*CompareFuncGen)(Jval, Jval);
 
 extern Graph new_graph();
-extern void add_edge_gen(Graph g, Jval v1, Jval v2, int (*func)(Jval, Jval));
+extern void add_edge_gen(Graph g, Jval v1, Jval v2, CompareFuncGen func);
+extern int get_adjacent_gen(Graph g, Jval v, CompareFuncGen func, JRB* out);
 
 extern Stack new_stack();
 extern int stack_empty(Stack s);
