@@ -24,8 +24,8 @@ int svertex_id(SVertex s) {
   return jval_i(s->key);
 }
 
-EVertexes svertex_lst(SVertex s) {
-  return (EVertexes) jval_v(s->val);
+EVertices svertex_lst(SVertex s) {
+  return (EVertices) jval_v(s->val);
 }
 
 int evertex_id(EVertex e) {
@@ -36,13 +36,13 @@ float evertex_w(EVertex e) {
   return jval_f(e->val);
 }
 
-void evertexes_free(EVertexes lst) {
+void evertexes_free(EVertices lst) {
   jrb_free_tree(lst);
 }
 
 void graph_add_edge(Graph g, int v1, int v2, float w) {
   SVertex s = jrb_find_int(g, v1);
-  EVertexes lst;
+  EVertices lst;
   if (s == NULL) {
     lst = make_jrb();
     jrb_insert_int(g, v1, new_jval_v((void*)lst));
@@ -55,14 +55,14 @@ void graph_add_edge(Graph g, int v1, int v2, float w) {
   }
 }
 
-int graph_adjacent_list(Graph g, int v, EVertexes* out) {
+int graph_adjacent_list(Graph g, int v, EVertices* out) {
   int n = 0;
   SVertex s = jrb_find_int(g, v);
   if (s == NULL)
     return 0;
   EVertex ptr;
-  EVertexes lst = svertex_lst(s);
-  evertexes_traverse(ptr, lst)
+  EVertices lst = svertex_lst(s);
+  evertices_traverse(ptr, lst)
     n++;
   *out = lst;
   return n;

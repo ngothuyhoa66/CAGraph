@@ -35,10 +35,10 @@ void cmd_bfs_print(Graph g, int start) {  // duyet bfs bat dau tu start
     int u = de_queue_i(q);
     printf("%d ", u);  // tham dinh u
     EVertex ptr;
-    EVertexes out;
+    EVertices out;
     if (graph_adjacent_list(g, u, &out) > 0) {
       // luon phai kiem tra so dinh tra ve, vi neu so dinh bang 0, out co the khong hop le
-      evertexes_traverse(ptr, out) {
+      evertices_traverse(ptr, out) {
         int v = evertex_id(ptr);
         if (!jrb_contain_int(seen, v)) {
           en_queue_i(q, v);
@@ -60,10 +60,10 @@ void cmd_dfs_print(Graph g, int start) {  // duyet dfs bat dau tu start
     int u = pop_i(s);
     printf("%d ", u);  // tham dinh u
     EVertex ptr;
-    EVertexes out;
+    EVertices out;
     if (graph_adjacent_list(g, u, &out) > 0) {
       // luon phai kiem tra so dinh tra ve, vi neu so dinh bang 0, out co the khong hop le
-      evertexes_traverse(ptr, out) {
+      evertices_traverse(ptr, out) {
         int v = evertex_id(ptr);
         if (!jrb_contain_int(seen, v)) {
           push_i(s, v);
@@ -77,12 +77,12 @@ void cmd_dfs_print(Graph g, int start) {  // duyet dfs bat dau tu start
 }
 
 void cmd_adjacent(Graph g, int u) {
-  EVertexes out = NULL;
+  EVertices out = NULL;
   int n = graph_adjacent_list(g, u, &out);
   printf("n = %d\n", n);
   if (n > 0) {
     EVertex ptr;
-    evertexes_traverse(ptr, out) {
+    evertices_traverse(ptr, out) {
       printf("%d ", evertex_id(ptr));
     }
   }
