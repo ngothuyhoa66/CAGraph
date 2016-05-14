@@ -1,7 +1,7 @@
 // Copyright (C) 2016 Nguyen Ba Ngoc
 
-#ifndef TERMS_H_
-#define TERMS_H_
+#ifndef UTILS_H_
+#define UTILS_H_
 
 #include "libfdr/jval.h"
 
@@ -10,4 +10,4 @@ extern int parse_int(char* arg, int* out);
 
 extern int cmp_int(Jval v1, Jval v2);
 
-#endif  // TERMS_H_
+#endif  // UTILS_H_

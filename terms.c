@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "libfdr/jval.h"
+#include "util.h"
 
 // ---------- JRB APIs ----------
 void jrb_mark_int(JRB tree, int val) {
@@ -42,8 +43,18 @@ int jrb_count_int(JRB tree, int val) {
 }
 
 // ---------- Graph APIs ---------
+Graph new_graph_gen(CompareFunction jval_cmp) {
+  Graph g;
+  g.data = make_jrb();
+  g.vertex_to_id = make_jrb();
+  g.id_to_vertex = make_jrb();
+  g.vertices_count = 0;
+  g.cmp = jval_cmp;
+  return g;
+}
+
 Graph new_graph() {
-  return make_jrb();
+  return new_graph_gen(&cmp_int);
 }
 
 int svertex_id(SVertex s) {
@@ -63,15 +74,15 @@ float evertex_w(EVertex e) {
 }
 
 void evertexes_free(EVertices lst) {
-  jrb_free_tree(lst);
+  jrb_free_tree(lst);  // free
 }
 
 void graph_add_edge(Graph g, int v1, int v2, float w) {
-  SVertex s = jrb_find_int(g, v1);
+  SVertex s = jrb_find_int(g.data, v1);
   EVertices lst;
   if (s == NULL) {
     lst = make_jrb();
-    jrb_insert_int(g, v1, new_jval_v((void*)lst));
+    jrb_insert_int(g.data, v1, new_jval_v((void*)lst));
   } else {
     lst = svertex_lst(s);
   }
@@ -83,7 +94,7 @@ void graph_add_edge(Graph g, int v1, int v2, float w) {
 
 int graph_adjacent_list(Graph g, int v, EVertices* out) {
   int n = 0;
-  SVertex s = jrb_find_int(g, v);
+  SVertex s = jrb_find_int(g.data, v);
   if (s == NULL)
     return 0;
   EVertex ptr;

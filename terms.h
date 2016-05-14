@@ -5,8 +5,15 @@
 
 #include "libfdr/dllist.h"
 #include "libfdr/jrb.h"
+typedef int (*CompareFunction)(Jval, Jval);
 
-typedef JRB Graph;
+typedef struct {
+  JRB data;
+  JRB vertex_to_id;
+  JRB id_to_vertex;
+  int vertices_count;
+  CompareFunction cmp;  // sử dụng để so sánh đỉnh
+} Graph;
 typedef JRB SVertex;  // đỉnh bắt đâu của một danh sách cạnh có hướng
 typedef JRB SVertices;  // danh sách đỉnh bắt đầu
 typedef JRB EVertex;  // đỉnh kết thúc của một cạnh có hướng, chứa trọng số cạnh
@@ -14,7 +21,6 @@ typedef JRB EVertices;  // danh sách đỉnh kết thúc (danh sách kề của
 typedef Dllist Stack;
 typedef Dllist Queue;
 typedef Dllist Path;
-typedef int (*CompareFuncGen)(Jval, Jval);
 
 // ---------- JRB APIs ----------
 extern void jrb_mark_int(JRB tree, int val);
@@ -24,7 +30,8 @@ extern void jrb_unrecord_int(JRB tree, int val);  // trừ 1 vào biến đếm
 extern int jrb_count_int(JRB tree, int val);  // đếm số lần gọi record với val
 
 // ---------- Graph APIs ---------
-extern Graph new_graph();
+extern Graph new_graph_gen(CompareFunction jval_cmp);
+extern Graph new_graph();  // mặc định sử dụng id kiểu int
 extern void graph_add_edge(Graph g, int v1, int v2, float w);
 extern int graph_adjacent_list(Graph g, int v, EVertices* out);
 extern int svertex_id(SVertex s);
@@ -51,6 +58,6 @@ extern void free_queue(Queue q);
 // ----------Helper macros --------
 #define str_equal(s1, s2) strcmp(s1, s2) == 0
 #define evertices_traverse(ptr, lst) jrb_traverse(ptr, lst)
-#define graph_traverse(ptr, lst) jrb_traverse(ptr, lst)
+#define graph_traverse(ptr, g) jrb_traverse(ptr, g.data)
 
 #endif  // TERMS_H_
