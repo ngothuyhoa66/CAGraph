@@ -21,7 +21,7 @@ int topo_print(Graph g) {
       if (jrb_contain_int(seen, u))
         continue;
 
-      if (jrb_count_int(in_degree, u) == 0) {
+      if (jrb_counter_int(in_degree, u) == 0) {
         printf("%d ", u);
         jrb_mark_int(seen, u);
         ++n;

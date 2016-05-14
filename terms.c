@@ -8,26 +8,25 @@
 #include "util.h"
 
 // ---------- JRB APIs ----------
-void jrb_mark_int(JRB tree, int val) {
-  if (!jrb_contain_int(tree, val))
-    jrb_insert_int(tree, val, new_jval_i(1));
+void jrb_mark_int(JRB tree, int key) {
+  jrb_record_int(tree, key);
 }
 
-int jrb_contain_int(JRB tree, int val) {
-  return jrb_find_int(tree, val)? 1: 0;
+int jrb_contain_int(JRB tree, int key) {
+  return jrb_counter_int(tree, key) > 0;
 }
 
-void jrb_record_int(JRB tree, int val) {
-  JRB node = jrb_find_int(tree, val);
+void jrb_record_int(JRB tree, int key) {
+  JRB node = jrb_find_int(tree, key);
   if (node) {
     node->val = new_jval_i(jval_i(node->val) + 1);
   } else {
-    jrb_insert_int(tree, val, new_jval_i(1));
+    jrb_insert_int(tree, key, new_jval_i(1));
   }
 }
 
-void jrb_unrecord_int(JRB tree, int val) {
-  JRB node = jrb_find_int(tree, val);
+void jrb_unrecord_int(JRB tree, int key) {
+  JRB node = jrb_find_int(tree, key);
   if (node) {
     int cc = jval_i(node->val);
     if (cc > 0)
@@ -37,24 +36,60 @@ void jrb_unrecord_int(JRB tree, int val) {
   }
 }
 
-int jrb_count_int(JRB tree, int val) {
-  JRB node = jrb_find_int(tree, val);
+int jrb_counter_int(JRB tree, int key) {
+  JRB node = jrb_find_int(tree, key);
   return node? jval_i(node->val): 0;
 }
 
+int jrb_nodes_count(JRB tree) {
+  JRB ptr;
+  int cc = 0;
+  jrb_traverse(ptr, tree)
+    ++cc;
+  return cc;
+}
+
+int dll_length(Dllist lst) {
+  if (lst == NULL)
+    return 0;
+  Dllist ptr;
+  int cc = 0;
+  dll_traverse(ptr, lst)
+    ++cc;
+  return cc;
+}
+
 // ---------- Graph APIs ---------
+const int kInvalidVertexId = -1;
+
 Graph new_graph_gen(CompareFunction jval_cmp) {
   Graph g;
   g.data = make_jrb();
   g.vertex_to_id = make_jrb();
   g.id_to_vertex = make_jrb();
-  g.vertices_count = 0;
+  g.next_vertex_id = 0;
   g.cmp = jval_cmp;
   return g;
 }
 
 Graph new_graph() {
   return new_graph_gen(&cmp_int);
+}
+
+int graph_vertex_to_id(Graph g, Jval v) {
+  JRB node = jrb_find_gen(g.vertex_to_id, v, g.cmp);
+  if (node)
+    return jval_i(node->val);
+  else
+    return kInvalidVertexId;
+}
+
+Jval* graph_id_to_pvertex(Graph g, int id) {
+  JRB node = jrb_find_int(g.id_to_vertex, id);
+  if (node)
+    return &(node->val);
+  else
+    return NULL;
 }
 
 int svertex_id(SVertex s) {
@@ -73,36 +108,53 @@ float evertex_w(EVertex e) {
   return jval_f(e->val);
 }
 
-void evertexes_free(EVertices lst) {
-  jrb_free_tree(lst);  // free
+int graph_add_vertex_gen(Graph g, Jval v) {
+  JRB node = jrb_find_gen(g.vertex_to_id, v, g.cmp);
+  if (node) {
+    return jval_i(node->val);
+  } else {
+    int id = g.next_vertex_id++;
+    jrb_insert_gen(g.vertex_to_id, v, new_jval_i(id), g.cmp);
+    jrb_insert_int(g.id_to_vertex, id, v);
+    return id;
+  }
 }
 
-void graph_add_edge(Graph g, int v1, int v2, float w) {
-  SVertex s = jrb_find_int(g.data, v1);
+void graph_add_edge_gen(Graph g, Jval v1, Jval v2, float w) {
+  int id1 = graph_add_vertex_gen(g, v1),
+      id2 = graph_add_vertex_gen(g, v2);
+  
+  // add (u, v, w) to data
+  SVertex s = jrb_find_int(g.data, id1);
   EVertices lst;
   if (s == NULL) {
     lst = make_jrb();
-    jrb_insert_int(g.data, v1, new_jval_v((void*)lst));
+    jrb_insert_int(g.data, id1, new_jval_v((void*)lst));
   } else {
     lst = svertex_lst(s);
   }
 
-  if (jrb_find_int(lst, v2) == NULL) {  // chua co dinh nay
-    jrb_insert_int(lst, v2, new_jval_f(w));
+  if (jrb_find_int(lst, id2) == NULL) {  // chua co dinh nay
+    jrb_insert_int(lst, id2, new_jval_f(w));
   }
 }
 
-int graph_adjacent_list(Graph g, int v, EVertices* out) {
-  int n = 0;
-  SVertex s = jrb_find_int(g.data, v);
-  if (s == NULL)
-    return 0;
-  EVertex ptr;
-  EVertices lst = svertex_lst(s);
-  evertices_traverse(ptr, lst)
-    n++;
-  *out = lst;
-  return n;
+Dllist graph_adjacent_list_gen(Graph g, Jval v) {
+  SVertex s = jrb_find_int(g.data, 
+                           graph_vertex_to_id(g, v));
+  if (s) {
+    EVertices lst = svertex_lst(s);
+    EVertex e;
+    Dllist out = new_dllist();
+    evertices_traverse(e, lst) {
+      Jval* p = graph_id_to_pvertex(g, evertex_id(e));
+      if (p)
+        dll_append(out, *p);
+    }
+    return out;
+  } else {
+    return NULL;
+  }
 }
 
 int is_dag(Graph g) {
@@ -117,9 +169,8 @@ int is_dag(Graph g) {
       jrb_mark_int(seen, start);
       while (!queue_empty(q)) {
         int u = de_queue_i(q);
-        EVertex ptr;
-        EVertices out;
-        if (graph_adjacent_list(g, u, &out) > 0) {
+        Dlllist out = graph_adjacent_list(g, new_jval_i(u));
+        if (out) > 0) {
           // luon phai kiem tra so dinh tra ve, vi neu so dinh bang 0, out co the khong hop le
           evertices_traverse(ptr, out) {
             int v = evertex_id(ptr);

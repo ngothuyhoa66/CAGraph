@@ -11,7 +11,7 @@ typedef struct {
   JRB data;
   JRB vertex_to_id;
   JRB id_to_vertex;
-  int vertices_count;
+  int next_vertex_id;
   CompareFunction cmp;  // sử dụng để so sánh đỉnh
 } Graph;
 typedef JRB SVertex;  // đỉnh bắt đâu của một danh sách cạnh có hướng
@@ -23,22 +23,29 @@ typedef Dllist Queue;
 typedef Dllist Path;
 
 // ---------- JRB APIs ----------
-extern void jrb_mark_int(JRB tree, int val);
-extern int jrb_contain_int(JRB tree, int val);
-extern void jrb_record_int(JRB tree, int val);  // nếu val đã có trong tree, tăng biến đếm lên 1
-extern void jrb_unrecord_int(JRB tree, int val);  // trừ 1 vào biến đếm
-extern int jrb_count_int(JRB tree, int val);  // đếm số lần gọi record với val
+extern void jrb_mark_int(JRB tree, int key);
+extern int jrb_contain_int(JRB tree, int key);
+extern void jrb_record_int(JRB tree, int key);  // nếu key đã có trong tree, tăng biến đếm lên 1
+extern void jrb_unrecord_int(JRB tree, int key);  // trừ 1 vào biến đếm
+extern int jrb_counter_int(JRB tree, int key);  // đếm số lần key được record
+extern int jrb_nodes_count(JRB tree); // số đỉnh trong cây
+
+extern int dll_length(Dllist lst);  // Độ dài danh sach
 
 // ---------- Graph APIs ---------
+extern const int kInvalidVertexId;
 extern Graph new_graph_gen(CompareFunction jval_cmp);
-extern Graph new_graph();  // mặc định sử dụng id kiểu int
-extern void graph_add_edge(Graph g, int v1, int v2, float w);
-extern int graph_adjacent_list(Graph g, int v, EVertices* out);
+extern int graph_vertex_to_id(Graph g, Jval v);
+extern Jval* graph_id_to_pvertex(Graph g, int id);
+
 extern int svertex_id(SVertex s);
 extern EVertices svertex_lst(SVertex s);
 extern int evertex_id(EVertex e);
 extern float evertex_w(EVertex e);
-extern void evertexes_free(EVertices lst);
+
+extern int graph_add_vertex_gen(Graph g, Jval v);
+extern void graph_add_edge_gen(Graph g, Jval v1, Jval v2, float w);
+extern Dllist graph_adjacent_list_gen(Graph g, Jval v);
 extern int is_dag(Graph g);
 
 // ---------- Stack APIs ---------
