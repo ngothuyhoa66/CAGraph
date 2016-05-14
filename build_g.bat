@@ -1,1 +1,1 @@
-gcc -o g -w g.c terms.c util.c libfdr/jval.c libfdr/jrb.c libfdr/dllist.c
+gcc -o g -w g.c terms.c util.c algorithm.c libfdr/jval.c libfdr/jrb.c libfdr/dllist.c
