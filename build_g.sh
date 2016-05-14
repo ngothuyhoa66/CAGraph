@@ -1,0 +1,1 @@
+gcc -o g -w g.c src/terms.c src/util.c src/algorithm.c libfdr/jval.c libfdr/jrb.c libfdr/dllist.c
