@@ -8,6 +8,7 @@
 
 typedef JRB Graph;
 typedef JRB SVertex;  // đỉnh bắt đâu của một danh sách cạnh có hướng
+typedef JRB SVertices;  // danh sách đỉnh bắt đầu
 typedef JRB EVertex;  // đỉnh kết thúc của một cạnh có hướng, chứa trọng số cạnh
 typedef JRB EVertices;  // danh sách đỉnh kết thúc (danh sách kề của một đỉnh)
 typedef Dllist Stack;
@@ -17,7 +18,10 @@ typedef int (*CompareFuncGen)(Jval, Jval);
 
 // ---------- JRB APIs ----------
 extern void jrb_mark_int(JRB tree, int val);
-extern int jrb_contain_int(JRB tree, int key);
+extern int jrb_contain_int(JRB tree, int val);
+extern void jrb_record_int(JRB tree, int val);  // nếu val đã có trong tree, tăng biến đếm lên 1
+extern void jrb_unrecord_int(JRB tree, int val);  // trừ 1 vào biến đếm
+extern int jrb_count_int(JRB tree, int val);  // đếm số lần gọi record với val
 
 // ---------- Graph APIs ---------
 extern Graph new_graph();
@@ -29,8 +33,6 @@ extern int evertex_id(EVertex e);
 extern float evertex_w(EVertex e);
 extern void evertexes_free(EVertices lst);
 extern int is_dag(Graph g);
-extern int get_vertices_topos(Graph g, Dllist vertices);
-extern float dijikstra(Graph g, int start, int end, Path path);
 
 // ---------- Stack APIs ---------
 extern Stack new_stack();
@@ -49,5 +51,6 @@ extern void free_queue(Queue q);
 // ----------Helper macros --------
 #define str_equal(s1, s2) strcmp(s1, s2) == 0
 #define evertices_traverse(ptr, lst) jrb_traverse(ptr, lst)
+#define graph_traverse(ptr, lst) jrb_traverse(ptr, lst)
 
 #endif  // TERMS_H_

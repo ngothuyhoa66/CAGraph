@@ -8,11 +8,37 @@
 
 // ---------- JRB APIs ----------
 void jrb_mark_int(JRB tree, int val) {
-  jrb_insert_int(tree, val, new_jval_i(1));
+  if (!jrb_contain_int(tree, val))
+    jrb_insert_int(tree, val, new_jval_i(1));
 }
 
-int jrb_contain_int(JRB tree, int key) {
-  return jrb_find_int(tree, key)? 1: 0;
+int jrb_contain_int(JRB tree, int val) {
+  return jrb_find_int(tree, val)? 1: 0;
+}
+
+void jrb_record_int(JRB tree, int val) {
+  JRB node = jrb_find_int(tree, val);
+  if (node) {
+    node->val = new_jval_i(jval_i(node->val) + 1);
+  } else {
+    jrb_insert_int(tree, val, new_jval_i(1));
+  }
+}
+
+void jrb_unrecord_int(JRB tree, int val) {
+  JRB node = jrb_find_int(tree, val);
+  if (node) {
+    int cc = jval_i(node->val);
+    if (cc > 0)
+      node->val = new_jval_i(cc -1);
+  } else {
+    // Co the bao loi
+  }
+}
+
+int jrb_count_int(JRB tree, int val) {
+  JRB node = jrb_find_int(tree, val);
+  return node? jval_i(node->val): 0;
 }
 
 // ---------- Graph APIs ---------
@@ -66,6 +92,43 @@ int graph_adjacent_list(Graph g, int v, EVertices* out) {
     n++;
   *out = lst;
   return n;
+}
+
+int is_dag(Graph g) {
+  SVertex ptr;
+  JRB seen = make_jrb();
+  graph_traverse(ptr, g) {
+    int start = svertex_id(ptr);
+    if (!jrb_contain_int(seen, start)) {
+      // BFS
+      Queue q = new_queue();
+      en_queue_i(q, start);
+      jrb_mark_int(seen, start);
+      while (!queue_empty(q)) {
+        int u = de_queue_i(q);
+        EVertex ptr;
+        EVertices out;
+        if (graph_adjacent_list(g, u, &out) > 0) {
+          // luon phai kiem tra so dinh tra ve, vi neu so dinh bang 0, out co the khong hop le
+          evertices_traverse(ptr, out) {
+            int v = evertex_id(ptr);
+            if (!jrb_contain_int(seen, v)) {
+              en_queue_i(q, v);
+              jrb_mark_int(seen, v);
+            } else {
+              // co chu trinh
+              free_queue(q);
+              jrb_free_tree(seen);
+              return 0;
+            }
+          }
+        }
+      }
+      free_queue(q);
+    }
+  }
+  jrb_free_tree(seen);
+  return 1;  
 }
 
 // ---------- Stack APIs ---------
