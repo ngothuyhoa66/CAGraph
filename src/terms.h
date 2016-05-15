@@ -70,4 +70,7 @@ extern void free_queue(Queue q);
 
 #define graph_traverse(ptr, g) jrb_traverse(ptr, g.data)
 
+#define float_abs(f) (f < 0? -f: f)
+#define float_equal(f1, f2) (float_abs(f1 - f2) < 1e-5)
+
 #endif  // TERMS_H_

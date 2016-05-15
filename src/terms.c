@@ -80,7 +80,6 @@ void graph_add_vertex(Graph g, Jval v) {
 }
 
 void graph_add_edge(Graph g, Jval v1, Jval v2, float w) {
-  graph_add_vertex(g, v1);
   graph_add_vertex(g, v2);
   JRB s = jrb_find_gen(g.data, v1, g.cmp);
   JRB lst;
