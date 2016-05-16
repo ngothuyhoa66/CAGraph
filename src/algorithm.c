@@ -64,7 +64,7 @@ float dijikstra(Graph g, Jval start, Jval end, Dllist path) {
     Jval key = vertex->key;
     jrb_insert_gen(dist, key, new_jval_f(g.cmp(vertex->key, start) == 0?
                         0: kInvalidDijikstraDistance), g.cmp);
-    jrb_insert_gen(back, key, start, g.cmp);
+    jrb_insert_gen(back, start, key, g.cmp);
   }
 
   // tim duong di

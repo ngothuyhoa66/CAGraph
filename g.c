@@ -45,6 +45,27 @@ int parse_graph_directed(char* fname, Graph* out) {
   return 1;
 }
 
+// tra ve 0 neu co loi,
+//        1 neu thanh cong.
+int parse_graph_w(char* fname, Graph* out) {
+  FILE* f = fopen(fname, "r");
+  if (!f)
+    return 0;
+  Graph g = new_graph(&cmp_int);
+  int n;  // so luong canh
+  fscanf(f, "%d", &n);
+  for (int i = 0; i < n; i++) {
+    int u, v;
+    float w;
+    fscanf(f, "%d%d%f", &u, &v, &w);
+    graph_add_edge(g, new_jval_i(u), new_jval_i(v), w);
+    graph_add_edge(g, new_jval_i(v), new_jval_i(u), w);
+  }
+  fclose(f);
+  *out = g;
+  return 1;
+}
+
 void cmd_bfs_print(Graph g, int start) {  // duyet bfs bat dau tu start
   Dllist out = bfs(g, new_jval_i(start));
   Dllist ptr;
