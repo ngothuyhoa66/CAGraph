@@ -52,7 +52,7 @@ Dllist dfs(Graph g, Jval start) {
   return out;
 }
 
-const float kInvalidDijikstraDistance = -1;
+const float kInfinitive = 1E9;
 
 float dijikstra(Graph g, Jval start, Jval end, Dllist path) {
   JRB dist = make_jrb();
@@ -62,56 +62,60 @@ float dijikstra(Graph g, Jval start, Jval end, Dllist path) {
   // khoi tao
   graph_traverse(vertex, g) {
     Jval key = vertex->key;
-    jrb_insert_gen(dist, key, new_jval_f(g.cmp(vertex->key, start) == 0?
-                        0: kInvalidDijikstraDistance), g.cmp);
+    jrb_insert_gen(dist, key, 
+      new_jval_f(g.cmp(vertex->key, start) == 0? 0: kInfinitive), g.cmp);
     jrb_insert_gen(back, start, key, g.cmp);
   }
 
   // tim duong di
   for (;;) {
     Jval minv;
-    float mindist = kInvalidDijikstraDistance;
+    float mindist = kInfinitive;
     JRB ptr;
     jrb_traverse(ptr, dist) {
       // tim min
       if (!jrb_contain_key(solved, ptr->key, g.cmp)) {
         float d = jval_f(ptr->val);
-        if (float_equal(mindist, kInvalidDijikstraDistance) ||
-            mindist > d) {
+        if (mindist > d) {
           mindist = d;
           minv = ptr->key;
         }
       }
+    }
 
-      // dk dung
-      if (float_equal(mindist, kInvalidDijikstraDistance)) {
-        return kInvalidDijikstraDistance;  // ko co duong di den end
-      } else if (g.cmp(minv, end) == 0) {
-        dll_prepend(path, end);
-        Jval bk = end;
-        while (g.cmp(bk, start) != 0) {
-          JRB node = jrb_find_gen(back, bk, g.cmp);
-          if (node) {
-            bk = node->val;
-            dll_prepend(path, bk);
-          } else {
-            printf("Loi xac dinh duong di.\n");
-            return mindist;
-          }
+    // dk dung
+    if (mindist >= kInfinitive) {
+      return kInfinitive;  // ko co duong di den end
+    } else if (g.cmp(minv, end) == 0) {
+      dll_prepend(path, end);
+      Jval bk = end;
+      while (g.cmp(bk, start) != 0) {
+        JRB node = jrb_find_gen(back, bk, g.cmp);
+        if (node) {
+          bk = node->val;
+          dll_prepend(path, bk);
+        } else {
+          printf("Loi xac dinh duong di.\n");
+          return mindist;
         }
-        return mindist;
       }
+      return mindist;
+    }
 
-      // sua duong di
-      EVertex e;
-      SVertex svt;
-      graph_export_svertex(g, minv, &svt);
-      evertices_traverse(e, svt) {
-        if (jval_f(jrb_find_gen(dist, e.key, g.cmp)->val) > 
-                mindist + e.weight) {
-          jrb_insert_gen(dist, e.key, new_jval_f(mindist + e.weight), g.cmp);
+    jrb_insert_gen(solved, minv, minv, g.cmp);
+    // sua duong di
+    EVertex e;
+    SVertex svt;
+    graph_export_svertex(g, minv, &svt);
+    evertices_traverse(e, svt) {
+      JRB node = jrb_find_gen(dist, e.key, g.cmp);
+      if (jval_f(node->val) > mindist + e.weight) {
+        node->val = new_jval_f(mindist + e.weight);
+        node = jrb_find_gen(back, e.key, g.cmp);
+        if (node)
+          node->val = minv;
+        else
           jrb_insert_gen(back, e.key, minv, g.cmp);
-        }
       }
     }
   }

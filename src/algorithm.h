@@ -3,7 +3,7 @@
 
 #include "terms.h"
 
-extern const float kInvalidDijikstraDistance;
+extern const float kInfinitive;
 
 extern Dllist bfs(Graph g, Jval s);
 extern Dllist dfs(Graph g, Jval s);

@@ -1,5 +1,6 @@
 // Copyright (C) 2016 Nguyen Ba Ngoc
 
+#include "src/algorithm.h"
 #include "src/terms.h"
 #include "src/util.h"
 
@@ -47,7 +48,7 @@ int parse_graph_directed(char* fname, Graph* out) {
 
 // tra ve 0 neu co loi,
 //        1 neu thanh cong.
-int parse_graph_w(char* fname, Graph* out) {
+int parse_graph_dw(char* fname, Graph* out) {
   FILE* f = fopen(fname, "r");
   if (!f)
     return 0;
@@ -94,7 +95,8 @@ void cmd_usage() {
          "./g bfs_print g.txt 1: duyet theo chieu rong va in ra cac dinh, bat dau tu dinh 1\n"
          "./g dfs_print g.txt 1: duyet theo chieu sau va in ra cac dinh, bat dau tu dinh 1\n"
          "./g isdag g.txt: kiem tra xem g.txt co phai la DAG hay khong\n"
-         "./g topo_print g.txt: in ra danh sach dinh theo trinh tu topo\n");
+         "./g topo_print g.txt: in ra danh sach dinh theo trinh tu topo\n"
+         "./g dijkstra g.txt 1 5: tim duong di ngan nhat tu 1 toi 5\n");
 }
 
 void cmd_topo(Graph g) {
@@ -108,6 +110,22 @@ void cmd_topo(Graph g) {
     printf("\n");
   } else {
     printf("Do thi ko thoa man dieu kien DAG.\n");
+  }
+}
+
+void cmd_dijikstra(Graph g, int start, int end) {
+  Dllist path = new_dllist();
+  float w;
+  w = dijikstra(g, new_jval_i(start), new_jval_i(end), path);
+  int n = dll_length(path);
+  if (n > 0) {
+    printf("w = %.2f n = %d\n", w, n);
+    Dllist ptr;
+    dll_traverse(ptr, path) {
+      printf("%d ", jval_i(ptr->val));
+    }
+  } else {
+    printf("Khong ton tai duong di tu %d den %d\n", start, end);
   }
 }
 
@@ -163,6 +181,15 @@ int main(int argc, char *argv[]) {
     Graph g;
     if (parse_graph_directed(argv[2], &g)) {
       cmd_topo(g);
+    } else {
+      printf("Loi doc tham so.\n");
+    }
+  } else if (str_equal(argv[1], "dijikstra")) {
+    Graph g;
+    int start, end;
+    if (parse_graph_dw(argv[2], &g) && 
+        parse_int(argv[3], &start) && parse_int(argv[4], &end)) {
+      cmd_dijikstra(g, start, end);
     } else {
       printf("Loi doc tham so.\n");
     }
