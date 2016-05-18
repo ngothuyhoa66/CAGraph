@@ -9,15 +9,13 @@ Dllist bfs(Graph g, Jval start) {
   while (!queue_empty(q)) {
     Jval u = de_queue(q);
     dll_append(out, u);
-    SVertex nd; 
-    if (graph_export_svertex(g, u, &nd) && !jrb_empty(nd.tbl)) {
-      EVertex e;
-      evertices_traverse(e, nd) {
-        Jval v = e.key;
-        if (!jrb_contain_key(seen, v, g.cmp)) {
-          en_queue(q, v);
-          jrb_mark_key(seen, v, g.cmp);
-        }
+    JRB ptr, tree;
+    // duyet dinh ke cua dinh u trong g
+    adjacent_traverse(g, u, ptr, tree) {
+      Jval v = vkey(ptr);
+      if (!jrb_contain_key(seen, v, g.cmp)) {
+        en_queue(q, v);
+        jrb_mark_key(seen, v, g.cmp);
       }
     }
   }
@@ -35,15 +33,13 @@ Dllist dfs(Graph g, Jval start) {
   while (!stack_empty(stk)) {
     Jval u = stack_pop(stk);
     dll_append(out, u);
-    SVertex nd; 
-    if (graph_export_svertex(g, u, &nd) && !jrb_empty(nd.tbl)) {
-      EVertex e;
-      evertices_traverse(e, nd) {
-        Jval v = e.key;
-        if (!jrb_contain_key(seen, v, g.cmp)) {
-          stack_push(stk, v);
-          jrb_mark_key(seen, v, g.cmp);
-        }
+    JRB ptr, tree;
+    // duyet dinh ke cua dinh u trong g
+    adjacent_traverse(g, u, ptr, tree) {
+      Jval v = vkey(ptr);
+      if (!jrb_contain_key(seen, v, g.cmp)) {
+        stack_push(stk, v);
+        jrb_mark_key(seen, v, g.cmp);
       }
     }
   }
@@ -62,7 +58,7 @@ float dijikstra(Graph g, Jval start, Jval end, Dllist path) {
   // khoi tao
   graph_traverse(vertex, g) {
     Jval key = vertex->key;
-    jrb_insert_gen(dist, key, 
+    jrb_insert_gen(dist, key,
       new_jval_f(g.cmp(vertex->key, start) == 0? 0: kInfinitive), g.cmp);
     jrb_insert_gen(back, start, key, g.cmp);
   }
@@ -104,25 +100,25 @@ float dijikstra(Graph g, Jval start, Jval end, Dllist path) {
 
     jrb_insert_gen(solved, minv, minv, g.cmp);
     // sua duong di
-    EVertex e;
-    SVertex svt;
-    graph_export_svertex(g, minv, &svt);
-    evertices_traverse(e, svt) {
-      JRB node = jrb_find_gen(dist, e.key, g.cmp);
-      if (jval_f(node->val) > mindist + e.weight) {
-        node->val = new_jval_f(mindist + e.weight);
-        node = jrb_find_gen(back, e.key, g.cmp);
+    JRB tree;
+    adjacent_traverse(g, minv, ptr, tree) {
+      Jval key = vkey(ptr);
+      float w = vweight(ptr);
+      JRB node = jrb_find_gen(dist, key, g.cmp);
+      if (vweight(node) > mindist + w) {
+        node->val = new_jval_f(mindist + w);
+        node = jrb_find_gen(back, key, g.cmp);
         if (node)
           node->val = minv;
         else
-          jrb_insert_gen(back, e.key, minv, g.cmp);
+          jrb_insert_gen(back, key, minv, g.cmp);
       }
     }
   }
 }
 
 int is_dag(Graph g) {
-  JRB ptr;  
+  JRB ptr;
   graph_traverse(ptr, g) {
     Jval start = ptr->key;
     // BFS
@@ -132,29 +128,25 @@ int is_dag(Graph g) {
     jrb_mark_key(seen, start, g.cmp);
     while (!queue_empty(q)) {
       Jval u = de_queue(q);
-      SVertex svt;
-      if (graph_export_svertex(g, u, &svt) ) {
-        // luon phai kiem tra so dinh tra ve, vi neu so dinh bang 0, out co the khong hop le
-        EVertex e;
-        evertices_traverse(e, svt) {
-          Jval v = e.key;
-          if (g.cmp(v, start) == 0) {
-            // co chu trinh
-            free_queue(q);
-            jrb_free_tree(seen);
-            return 0;
-          }
-          if (!jrb_contain_key(seen, v, g.cmp)) {
-            en_queue(q, v);
-            jrb_mark_key(seen, v, g.cmp);
-          }          
+      JRB ptr, tree;
+      adjacent_traverse(g, u, ptr, tree) {
+        Jval v = vkey(ptr);
+        if (g.cmp(v, start) == 0) {
+          // co chu trinh
+          free_queue(q);
+          jrb_free_tree(seen);
+          return 0;
+        }
+        if (!jrb_contain_key(seen, v, g.cmp)) {
+          en_queue(q, v);
+          jrb_mark_key(seen, v, g.cmp);
         }
       }
     }
     free_queue(q);
     jrb_free_tree(seen);
   }
-  return 1;  
+  return 1;
 }
 
 Dllist topo_print(Graph g) {

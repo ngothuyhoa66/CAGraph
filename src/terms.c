@@ -119,6 +119,11 @@ JRB graph_export_indegree(Graph g) {
   return in_degree;
 }
 
+JRB adjacent_tree(Graph g, Jval v) {
+  JRB tmp = jrb_find_gen(g.data, v, g.cmp);
+  return tmp? (JRB) jval_v(tmp->val): NULL;
+}
+
 // ---------- Stack APIs ---------
 Stack new_stack() {
   return new_dllist();

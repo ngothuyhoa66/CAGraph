@@ -42,6 +42,7 @@ extern void graph_add_vertex(Graph g, Jval v);
 extern void graph_add_edge(Graph g, Jval v1, Jval v2, float w);
 extern int graph_export_svertex(Graph g, Jval v, SVertex* out);
 extern JRB graph_export_indegree(Graph g);
+extern JRB adjacent_tree(Graph g, Jval v);
 
 // ---------- Stack APIs ---------
 extern Stack new_stack();
@@ -59,15 +60,12 @@ extern void free_queue(Queue q);
 
 // ----------Helper macros --------
 #define str_equal(s1, s2) strcmp(s1, s2) == 0
-#define evertices_traverse(e /* evertex*/ , s /* svertex */) \
-  for(s.ptr = jrb_first(s.tbl), \
-      e.key = (s.ptr != jrb_nil(s.tbl))? s.ptr->key: e.key, \
-      e.weight = (s.ptr != jrb_nil(s.tbl))? jval_f(s.ptr->val): 0; \
-          s.ptr != jrb_nil(s.tbl); \
-            s.ptr = jrb_next(s.ptr), \
-            e.key = (s.ptr != jrb_nil(s.tbl))? s.ptr->key: e.key, \
-            e.weight = (s.ptr != jrb_nil(s.tbl))? jval_f(s.ptr->val): 0)
-
+#define adjacent_traverse(g, v, ptr, tree) \
+    tree = adjacent_tree(g, v);            \
+    if (tree)                              \
+      jrb_traverse(ptr, tree)
+#define vkey(ptr) ptr->key
+#define vweight(ptr) jval_f(ptr->val)
 #define graph_traverse(ptr, g) jrb_traverse(ptr, g.data)
 
 #define float_abs(f) (f < 0? -f: f)
