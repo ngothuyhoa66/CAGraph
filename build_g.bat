@@ -5,5 +5,5 @@ g bfs_print data\g.txt 1 &
 g dfs_print data\g.txt 1 &
 g isdag data\g.txt &
 g topo_print data\g.txt &
-g dijkstra data\g.txt 1 5
+g dijikstra data\djk.txt 1 5
 

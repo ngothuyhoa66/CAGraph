@@ -36,7 +36,7 @@ void cmd_usage() {
          "./g dfs_print g.txt 1: duyet theo chieu sau va in ra cac dinh, bat dau tu dinh 1\n"
          "./g isdag g.txt: kiem tra xem g.txt co phai la DAG hay khong\n"
          "./g topo_print g.txt: in ra danh sach dinh theo trinh tu topo\n"
-         "./g dijkstra g.txt 1 5: tim duong di ngan nhat tu 1 toi 5\n");
+         "./g dijikstra g.txt 1 5: tim duong di ngan nhat tu 1 toi 5\n");
 }
 
 void cmd_topo(Graph g) {
@@ -70,14 +70,14 @@ void cmd_dijikstra(Graph g, int start, int end) {
 }
 
 void cmd_adjacent(Graph g, int u) {
-  SVertex svt;
-  if (graph_export_svertex(g, new_jval_i(u), &svt)) {
-    EVertex e;
-    printf("n = %d\n", jrb_nodes_count(svt.tbl));
-    evertices_traverse(e, svt) {
-      printf("%d ", jval_i(e.key));
-    }
-    printf("\n");
+  JRB ptr, tree;
+  int n = 0;
+  adjacent_traverse(g, new_jval_i(u), ptr, tree) {
+    printf("%d ", jval_i(vkey(ptr)));
+    ++n;
+  }
+  if (tree) {
+    printf("n = %d\n", n);
   } else {
     printf("Dinh ko ton tai.\n");
   }
