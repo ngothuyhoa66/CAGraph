@@ -6,6 +6,18 @@
 #include "libfdr/dllist.h"
 #include "libfdr/jrb.h"
 typedef int (*CompareFunction)(Jval, Jval);
+typedef void (*FreeComplexVertex)(Jval);
+
+
+/*
+ * TODO(bangoc): Vấn đề giải phóng bộ nhớ dữ liệu đồ thị.
+ * Cân nhắc việc tìm kiếm giải pháp khái quát cho vấn đề giải phóng
+ * dữ liệu đồ thị, có tính đến các giải pháp lưu trữ dữ liệu đỉnh 
+ * khác nhau.
+ *
+ * Hiện tại, mọi người cần tự định nghĩa hàm giải phóng đồ thị cho
+ * phù hợp với cách cấp phát bộ nhớ cho đỉnh của mình.
+ */
 
 typedef struct {
   JRB data;
@@ -43,6 +55,7 @@ extern void graph_add_edge(Graph g, Jval v1, Jval v2, float w);
 extern int graph_export_svertex(Graph g, Jval v, SVertex* out);
 extern JRB graph_export_indegree(Graph g);
 extern JRB adjacent_tree(Graph g, Jval v);
+extern void free_graph(Graph g);
 
 // ---------- Stack APIs ---------
 extern Stack new_stack();
