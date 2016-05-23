@@ -34,7 +34,7 @@ void cmd_usage() {
          "./g adjacent g.txt 1: in ra so luong dinh ke voi dinh 1 va danh sach cac dinh nay\n"
          "./g bfs_print g.txt 1: duyet theo chieu rong va in ra cac dinh, bat dau tu dinh 1\n"
          "./g dfs_print g.txt 1: duyet theo chieu sau va in ra cac dinh, bat dau tu dinh 1\n"
-         "./g isdag g.txt: kiem tra xem g.txt co phai la DAG hay khong\n"
+         "./g is_dag g.txt: kiem tra xem g.txt co phai la DAG hay khong\n"
          "./g topo_print g.txt: in ra danh sach dinh theo trinh tu topo\n"
          "./g dijikstra g.txt 1 5: tim duong di ngan nhat tu 1 toi 5\n");
 }

@@ -3,7 +3,7 @@ g --help &
 g adjacent data\g.txt 1 &
 g bfs_print data\g.txt 1 &
 g dfs_print data\g.txt 1 &
-g isdag data\g.txt &
+g is_dag data\g.txt &
 g topo_print data\g.txt &
 g dijikstra data\djk.txt 1 5
 

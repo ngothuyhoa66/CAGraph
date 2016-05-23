@@ -109,13 +109,13 @@ int graph_export_svertex(Graph g, Jval v, SVertex* out) {
 JRB graph_export_indegree(Graph g) {
   JRB in_degree = make_jrb();
   JRB ptr;
-  // graph_traverse(ptr, g) {
-  //   JRB tbl = (JRB) jval_v(ptr->val);
-  //   JRB ev;
-  //   jrb_traverse(ev, tbl) {
-  //     jrb_record_key(in_degree, ev->key, g.cmp);
-  //   }
-  // }
+  graph_traverse(ptr, g) {
+    JRB tbl = (JRB) jval_v(ptr->val);
+    JRB vv;
+    jrb_traverse(vv, tbl) {
+      jrb_record_key(in_degree, vv->key, g.cmp);
+    }
+  }
   return in_degree;
 }
 
