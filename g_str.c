@@ -36,10 +36,10 @@ void cmd_usage() {
          "./g dfs_print g.txt 1: duyet theo chieu sau va in ra cac dinh, bat dau tu dinh 1\n");
 }
 
-void cmd_adjacent(Graph g, int u) {
+void cmd_adjacent(Graph g, char* u) {
   JRB ptr, tree;
   int n = 0;
-  adjacent_traverse(g, new_jval_i(u), ptr, tree) {
+  adjacent_traverse(g, new_jval_s(u), ptr, tree) {
     printf("%s ", jval_s(vkey(ptr)));
     ++n;
   }
