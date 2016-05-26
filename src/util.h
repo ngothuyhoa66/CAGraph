@@ -19,6 +19,12 @@ extern int parse_graph_d(char* fname, Graph* out);
 // Ví dụ định dạng tệp data/djk.txt
 extern int parse_graph_dw(char* fname, Graph* out);
 
+// đọc đồ thị vô hướng, đỉnh kiểu chuỗi, ví dụ định dạng tệp
+// data/g_str.txt
+int parse_graph_ustr(char* fname, Graph* out);
+
 extern int cmp_int(Jval v1, Jval v2);
+
+extern int cmp_str(Jval v1, Jval v2);
 
 #endif  // UTILS_H_
