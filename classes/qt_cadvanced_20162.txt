@@ -5,10 +5,10 @@ Lê Trọng Chung:     8
 Hoàng Mạnh Quân:    10
 Nguyễn Ngọc Trung:  9.5
 
-Hoàng Thế Anh:      10
-Hoàng Minh Quang:   9.5
-Lê Thanh Bình:      10
-Đỗ Văn Duy:         10
+Hoàng Thế Anh:      9.5
+Hoàng Minh Quang:   9.0
+Lê Thanh Bình:      9.5
+Đỗ Văn Duy:         9.5
 
 Nguyễn Trung Đức:   7.5
 Bùi Văn Hưng:       7.5
