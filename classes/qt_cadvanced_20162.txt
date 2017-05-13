@@ -1,0 +1,45 @@
+CAdvanced 20162
+
+Lê Công Hậu:        10
+Lê Trọng Chung:     8
+Hoàng Mạnh Quân:    10
+Nguyễn Ngọc Trung:  9.5
+
+Hoàng Thế Anh:      10
+Hoàng Minh Quang:   9.5
+Lê Thanh Bình:      10
+Đỗ Văn Duy:         10
+
+Nguyễn Trung Đức:   7.5
+Bùi Văn Hưng:       7.5
+Nguyễn Minh Côi:    6.0
+Hoàng Ngọc Quý:     6.0
+Nguyễn Đình Quý:    6.0
+
+Lê Thị Ngọc Ánh:    7.0
+Đỗ Thị Hồng Diệp:   7.0
+Nguyễn Huy:         7.0
+Nghiêm Thị Trà My:  7.5
+Trần Hữu Ngọc:      7.0
+Hoàng Đức Quân:     7.0
+
+Lê Thanh Tùng:      6.0
+Hà Minh Đức:        6.0
+Đỗ Hoàng Hiếu:      6.0
+Trần Văn Tùng:      6.0
+
+Nguyễn Đình Hùng:   10
+Nguyễn Đình Chính:  8.0
+Trần Thị Diệu Linh: 8.0
+Trần Minh Hải:      10.0
+Trịnh Đình Tài:     8.0
+
+Nguyễn Kiều Thương: 9.0
+Dương Ngọc Sơn:     7.5
+Đỗ Thị Hải:         9.5
+Trịnh Hữu Vũ:       7.5
+
+Vũ Hồng Sơn:        9.0
+Vũ Quốc Đạt:        7.0
+Phạm Thị Hằng:      8.5
+Nguyễn Duy Ý:       7.0
